@@ -1,0 +1,3 @@
+These are all packages coming from Dev.
+They are being stored here First before being unzipped and moved to /var/www/ishop/ ...
+which in this case is a Directory called 'Host' .
