@@ -15,11 +15,11 @@ echo "${IP_M}"
 
 echo "ip is ${IP_M} machine is ${MACH} version is ${VER}"
 
-	if [ $IP_M == "10.0.2.20" ]
+	if [ $IP_M == "10.0.2.10" ]
 	then
-	#10.0.2.20 is a DEV FrontEnd machine
+	#10.0.2.10 is a DEV FrontEnd machine
 	#zip files you want to send
-       	cd ~/Desktop/Haris/DoZip
+       	cd ~/deploy/Development/DoZip/
 	      	zip FE_version_${VER}.zip FE/*
 	#send to deploy VM
         	sshpass -p "${PASS_M}" scp FE_version_${VER}.zip "${USER_M}"@"${IP_D}":~/Desktop/Deploy/Packages
@@ -27,3 +27,17 @@ echo "ip is ${IP_M} machine is ${MACH} version is ${VER}"
         	sshpass -p "${PASS_M}" ssh "${USER_M}"@"${IP_D}" 'unzip ~/Desktop/Deploy/Packages/FE_version_'${VER}'.zip -d ~/Desktop/Deploy/Host'
         exit
 	fi
+
+        if [ $IP_M == "10.0.2.11" ]
+        then
+        #10.0.2.11 is a DEV FrontEnd machine
+        #zip files you want to send
+        cd ~/deploy/Development/DoZip/
+                zip BE_version_${VER}.zip BE/*
+        #send to deploy VM
+                sshpass -p "${PASS_M}" scp BE_version_${VER}.zip "${USER_M}"@"${IP_D}":~/Desktop/Deploy/Packages
+        # unzip in deploy vm and move to new location
+                sshpass -p "${PASS_M}" ssh "${USER_M}"@"${IP_D}" 'unzip ~/Desktop/Deploy/Packages/BE_version_'${VER}'.zip -d ~/Desktop/Deploy/Host'
+        exit
+        fi
+

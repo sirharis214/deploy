@@ -36,11 +36,11 @@
 	$ip = shell_exec("ifconfig enp0s3 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1");
 	echo "Your IP is: $ip";
 	
-		if ($ip = "10.0.2.20")
+		if ($ip = "10.0.2.10")
 		{
 			$machineType = "FE";
 		}
-		elseif ($ip = "10.0.2.21")
+		elseif ($ip = "10.0.2.11")
 		{
 			$machineType = "BE";
 		}
