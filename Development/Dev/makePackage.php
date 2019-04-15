@@ -31,6 +31,10 @@
 		$nextV = chkV($machine);
 		echo"Our new Version Number is $nextV \n";
 		shell_exec("../package.sh $machine $nextV");
+	
+		 //add sql statement to update database:deploy Table:DevTable
+                echo getenv("FILENAME");
+
 	}
 
 	$ip = shell_exec("ifconfig enp0s3 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1");

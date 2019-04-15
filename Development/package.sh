@@ -25,7 +25,12 @@ echo "ip is ${IP_M} machine is ${MACH} version is ${VER}"
         	sshpass -p "${PASS_M}" scp FE_version_${VER}.zip "${USER_M}"@"${IP_D}":~/Desktop/Deploy/Packages
 	# unzip in deploy vm and move to new location
         	sshpass -p "${PASS_M}" ssh "${USER_M}"@"${IP_D}" 'unzip ~/Desktop/Deploy/Packages/FE_version_'${VER}'.zip -d ~/Desktop/Deploy/Host'
-        exit
+        
+	FILENAME="$(FE_version_${VER}.zip)"
+        echo"$FILENAME"
+        export FILENAME
+
+	exit
 	fi
 
         if [ $IP_M == "10.0.2.11" ]
