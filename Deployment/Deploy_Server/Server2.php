@@ -43,6 +43,15 @@ function doTest($bzid)
 
 }
 
+doUpdate($myip,$lvl,$machine,$nextV,$fileName)
+{
+	$db = mysqli_connect("localhost","user1","user1pass","deploy");
+        echo "received Request FOR Test".PHP_EOL;
+        $que = "INSERT INTO DevTable (ip,lvl,type,version,filename) Values('$myip','$lvl','$machine','$nextV','$filename')";
+        $Q = mysqli_query($db,$que);
+	
+}
+
 function requestProcessor($request)
 {
   	echo "received request".PHP_EOL;
@@ -58,6 +67,8 @@ function requestProcessor($request)
 		return getV($request['machine']);
 	case "test":
 		return doTest($request['bzid']);
+	case "updateTable":
+                return doUpdate($request['ip'],$request['lvl'],$request['type'],$request['version'],$request['filename']);
 	case "validate_session":
 		return doValidate($request['sessionId']);
 	}

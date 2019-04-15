@@ -34,7 +34,16 @@
 		$return=shell_exec("../package.sh $machine $nextV");
 
 		//add sql statement to update database:deploy Table:DevTable
-
+		$request= array();
+                $request['type'] = "updateTable";
+		$request['ip'] = 	$ip;
+		$request['lvl'] = 	"Dev";
+                $request['type'] = 	$machine;
+		$request['version']= 	$nextV;
+		$request['filename']=	$return;
+		
+		echo "this is request: $request[ip] \n";
+                #$response = $client->send_request($request);
 	}
 
 	$ip = shell_exec("ifconfig enp0s3 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1");
