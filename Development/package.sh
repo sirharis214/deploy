@@ -15,34 +15,34 @@ echo "${IP_M}"
 
 echo "ip is ${IP_M} machine is ${MACH} version is ${VER}"
 
-	if [ $IP_M == "10.0.2.10" ]
+	if [ $IP_M == '10.0.2.10' ]
 	then
-	#10.0.2.10 is a DEV FrontEnd machine
-	#zip files you want to send
-       	cd ~/deploy/Development/DoZip/
-	      	zip FE_version_${VER}.zip FE/*
-	#send to deploy VM
-        	sshpass -p "${PASS_M}" scp FE_version_${VER}.zip "${USER_M}"@"${IP_D}":~/Desktop/Deploy/Packages
-	# unzip in deploy vm and move to new location
-        	sshpass -p "${PASS_M}" ssh "${USER_M}"@"${IP_D}" 'unzip ~/Desktop/Deploy/Packages/FE_version_'${VER}'.zip -d ~/Desktop/Deploy/Host'
+		#10.0.2.10 is a DEV FrontEnd machine
+		#zip files you want to send
+       		cd ~/deploy/Development/DoZip/
+	      		zip FE_version_${VER}.zip FE/*
+		#send to deploy VM
+        		sshpass -p "${PASS_M}" scp FE_version_${VER}.zip "${USER_M}"@"${IP_D}":~/Desktop/Deploy/Packages
+		# unzip in deploy vm and move to new location
+        		sshpass -p "${PASS_M}" ssh "${USER_M}"@"${IP_D}" 'unzip ~/Desktop/Deploy/Packages/FE_version_'${VER}'.zip -d ~/Desktop/Deploy/Host'
         
-	FILENAME="$(FE_version_${VER}.zip)"
-        echo"$FILENAME"
-        export FILENAME
+		FILENAME="$(FE_version_${VER}.zip)"
+        	echo $FILENAME
+        	echo "FE inside"
 
-	exit
-	fi
+	
+	else
+        	#10.0.2.11 is a DEV FrontEnd machine
+        	#zip files you want to send
+        	cd ~/deploy/Development/DoZip/
+                	zip BE_version_${VER}.zip BE/*
+        	#send to deploy VM
+                	sshpass -p "${PASS_M}" scp BE_version_${VER}.zip "${USER_M}"@"${IP_D}":~/Desktop/Deploy/Packages
+        	#unzip in deploy vm and move to new location
+                	sshpass -p "${PASS_M}" ssh "${USER_M}"@"${IP_D}" 'unzip ~/Desktop/Deploy/Packages/BE_version_'${VER}'.zip -d ~/Desktop/Deploy/Host'
 
-        if [ $IP_M == "10.0.2.11" ]
-        then
-        #10.0.2.11 is a DEV FrontEnd machine
-        #zip files you want to send
-        cd ~/deploy/Development/DoZip/
-                zip BE_version_${VER}.zip BE/*
-        #send to deploy VM
-                sshpass -p "${PASS_M}" scp BE_version_${VER}.zip "${USER_M}"@"${IP_D}":~/Desktop/Deploy/Packages
-        # unzip in deploy vm and move to new location
-                sshpass -p "${PASS_M}" ssh "${USER_M}"@"${IP_D}" 'unzip ~/Desktop/Deploy/Packages/BE_version_'${VER}'.zip -d ~/Desktop/Deploy/Host'
-        exit
+        	FILENAME="BE_version_${VER}.zip"
+        	echo $FILENAME
+
         fi
 

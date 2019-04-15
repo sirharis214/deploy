@@ -1,11 +1,10 @@
 #!/usr/bin/php
 <?php
-
  	require_once('path.inc');
         require_once('get_host_info.inc');
 	require_once('rabbitMQLib.inc');
 
-	global $argv;
+//	global $argv;
 
 	function chkV($machine)
 	{
@@ -30,22 +29,24 @@
 		
 		$nextV = chkV($machine);
 		echo"Our new Version Number is $nextV \n";
-		shell_exec("../package.sh $machine $nextV");
-	
-		 //add sql statement to update database:deploy Table:DevTable
-                echo getenv("FILENAME");
+ 		
+		//getting packge filename from bash
+		$return=shell_exec("../package.sh $machine $nextV");
+
+		//add sql statement to update database:deploy Table:DevTable
 
 	}
 
 	$ip = shell_exec("ifconfig enp0s3 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1");
 	echo "Your IP is: $ip";
+	$machineType  = "";
 	
-		if ($ip = "10.0.2.10")
-		{
+		if ($ip == "10.0.2.10"){
+
 			$machineType = "FE";
-		}
-		elseif ($ip = "10.0.2.11")
-		{
+		}		
+		else{
+		
 			$machineType = "BE";
 		}
 
