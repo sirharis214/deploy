@@ -18,3 +18,9 @@ Concept:
 
 # As of now that is all.. Lots more to come soon.
 # Haris - 04:44 am 04/12/2019
+
+# Haris - 12:25 am 04/18/2019   UPDATE:
+* package.sh script is now using the variable MACH (FE/BE) which is given from 
+  makepackage.php to determine which files to zip and send.
+* makepackage.php also updates the DevTable with new version number and filename after
+  sending the package to Deploy

@@ -22,35 +22,46 @@
 	
 		 return $newVerNum;
 	}
+	
+	function doUpdate($nextV,$machine)
+	{
+		$client = new rabbitMQClient("testRabbitMQ.ini","testServer");
+
+		$myip = shell_exec("ifconfig enp0s3 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1");
+                $lvl = "Dev";
+                $fname = $machine."_version_".$nextV.".zip";
+                //echo "file name is: $fname  \n";
+
+                $request            =   array();
+                $request['type']    =   "updateTable";
+                $request['ip']      =   trim($myip);
+                $request['lvl']     =   $lvl;
+                $request['machine'] =   $machine;
+                $request['version'] =   $nextV;
+                $request['filename']=   $fname;
+
+                $response = $client->send_request($request);
+	}
 
 	function makeNewVersion($machine)
 	{
-		$client = new rabbitMQClient("testRabbitMQ.ini","testServer");
+		//$client = new rabbitMQClient("testRabbitMQ.ini","testServer");
 		
 		$nextV = chkV($machine);
 		echo"Our new Version Number is $nextV \n";
  		
-		//getting packge filename from bash
-		$return=shell_exec("../package.sh $machine $nextV");
+		//Zipping and Sending package to Deploy from bash script
+		shell_exec("../package.sh $machine $nextV");
 
-		//add sql statement to update database:deploy Table:DevTable
-		$request= array();
-                $request['type'] = "updateTable";
-		$request['ip'] = 	$ip;
-		$request['lvl'] = 	"Dev";
-                $request['type'] = 	$machine;
-		$request['version']= 	$nextV;
-		$request['filename']=	$return;
-		
-		echo "this is request: $request[ip] \n";
-                #$response = $client->send_request($request);
+		//Updating Deploy table : DevTable
+	 	$Update = doUpdate($nextV,$machine);
 	}
 
 	$ip = shell_exec("ifconfig enp0s3 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1");
 	echo "Your IP is: $ip";
 	$machineType  = "";
 	
-		if ($ip == "10.0.2.10"){
+		if (trim($ip) == "10.0.2.10"){
 
 			$machineType = "FE";
 		}		
