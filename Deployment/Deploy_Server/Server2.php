@@ -53,6 +53,43 @@ function doTest($bzid)
 
 }
 
+function getFile($machine)
+{
+	$db = mysqli_connect("localhost","user1","user1pass","deploy");
+        
+	echo "received Request to get File to send to QA".PHP_EOL;
+        $statement = "SELECT MAX(version) FROM DevTable WHERE type = '$machine'";
+
+        $runQ = mysqli_query($db,$statement);
+        $queryBack = mysqli_num_rows($runQ);
+        if (!$db){ die("mysql connection failed: ".mysqli_connect_error());}
+        else
+        {
+                if ($queryBack > 0 )
+                {
+                        $Varray = mysqli_fetch_array($runQ);
+                        $version = $Varray[0];
+                        echo"Version Num is : $version".PHP_EOL;
+                }
+		$que = "SELECT filename FROM DevTable WHERE type ='$machine' AND version='$version'";
+        	$Q = mysqli_query($db,$que);
+		if (!$Q)
+		{
+			echo"Couldn't do query".PHP_EOL;
+			exit();
+		}	
+		else
+		{
+			foreach($Q as $row)
+			{ 
+				$file = $row['filename'];
+				echo"filename is: $file";
+				return $file;
+			}
+		}
+	}
+}
+
 function requestProcessor($request)
 {
   	echo "received request".PHP_EOL;
@@ -68,8 +105,10 @@ function requestProcessor($request)
 		return getV($request['machine']);
 	case "updateTable":
                 return doUpdate($request['ip'],$request['lvl'],$request['machine'],$request['version'],$request['filename']);
+	case "getFile":
+		return getFile($request['machine']);
 	case "test":
-		return doTest($request['bzid']);
+                return doTest($request['bzid']);
 	case "validate_session":
 		return doValidate($request['sessionId']);
 	}

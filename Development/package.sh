@@ -23,9 +23,9 @@ echo "ip is ${IP_M} machine is ${MACH} version is ${VER}"
        		cd ~/deploy/Development/DoZip/
 	      		zip FE_version_${VER}.zip FE/*
 		#send to deploy VM
-        		sshpass -p "${PASS_M}" scp FE_version_${VER}.zip "${USER_M}"@"${IP_D}":~/Desktop/Deploy/Packages
+        		sshpass -p "${PASS_M}" scp FE_version_${VER}.zip "${USER_M}"@"${IP_D}":~/Deploy/Deployment/Packages
 		# unzip in deploy vm and move to new location
-        		sshpass -p "${PASS_M}" ssh "${USER_M}"@"${IP_D}" 'unzip ~/Desktop/Deploy/Packages/FE_version_'${VER}'.zip -d ~/Desktop/Deploy/Host'
+        		sshpass -p "${PASS_M}" ssh "${USER_M}"@"${IP_D}" 'unzip ~/Deploy/Deployment/Packages/FE_version_'${VER}'.zip -d ~/Deploy/Deployment/Host'
 
 		exit 0
 	
@@ -35,9 +35,9 @@ echo "ip is ${IP_M} machine is ${MACH} version is ${VER}"
         	cd ~/deploy/Development/DoZip/
                 	zip BE_version_${VER}.zip BE/*
         	#send to deploy VM
-                	sshpass -p "${PASS_M}" scp BE_version_${VER}.zip "${USER_M}"@"${IP_D}":~/Desktop/Deploy/Packages
+                	sshpass -p "${PASS_M}" scp BE_version_${VER}.zip "${USER_M}"@"${IP_D}":~/Deploy/Deploment/Packages
         	#unzip in deploy vm and move to new location
-                	sshpass -p "${PASS_M}" ssh "${USER_M}"@"${IP_D}" 'unzip ~/Desktop/Deploy/Packages/BE_version_'${VER}'.zip -d ~/Desktop/Deploy/Host'
+                	sshpass -p "${PASS_M}" ssh "${USER_M}"@"${IP_D}" 'unzip ~/Deploy/Deployment/Packages/BE_version_'${VER}'.zip -d ~/Deploy/Deployment/Host'
 
         fi
 
