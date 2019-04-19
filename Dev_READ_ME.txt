@@ -1,5 +1,7 @@
 This Branch is for the Developer VM's.
 clone this branch into both Dev VM's.
+    FE  10.0.2.10
+    BE  10.0.2.11
 *** MUST DO ***
 
 cd ~
