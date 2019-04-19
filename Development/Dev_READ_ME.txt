@@ -1,6 +1,7 @@
 This Branch is for the Developer VM's.
 clone this branch into both Dev VM's.
 *** MUST DO ***
+clone the Repo into your ~    **do not clone into a directory, clone straight into ~
 
 cd ~
 git clone ....

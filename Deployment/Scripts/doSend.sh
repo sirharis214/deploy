@@ -16,16 +16,19 @@ FILE=$2
                 PASS_M="Ahsan121"
 	fi
 
-	#info for Deploy machine
-
-	cd ~/Deploy/Deployment/Packages/
-	 sshpass -p "${PASS_M}" scp ${FILE} "${USER_M}"@"${IP_D}":~/Deploy/deploy/QA/Files/
-
-	 #unzip in deploy vm and move to new location
-
+# password for QA root
 pAs="passwd"
-/usr/bin/sshpass -p ${pAs} ssh root@"${IP_D}" "sudo unzip /home/ahsan/Deploy/deploy/QA/Files/'${FILE}' -d /var/www/DepTest/"
-	 #/usr/bin/sshpass -p 'Ahsan121' ssh -t ahsan@10.0.2.12 "sudo unzip ~/Deploy/deploy/QA/Files/'${FILE}' -C /var/www/DepTest/"
-#                   /usr/bin/sshpass -p ${pas} ssh -t root@"${IP_D}" "unzip ~/Deploy/deploy/QA/Files/'${FILE}' -C /var/www/DepTest/"
 
+# Delete old pkg files from ~/deploy/QA/Files 
+# Delete files from /var/www/Backup/
+# mv files from /var/www/DepTest to /var/www/Backup/
 
+/usr/bin/sshpass -p ${pAs} ssh -t root@"${IP_D}" "cd /home/${USER_M}/deploy/QA/Files/; sudo rm *.zip; cd /var/www/Backup/; sudo rm -r ./* ; cd /var/www/DepTest; sudo mv -f ./* ../Backup/"
+
+# Send New package to ~/deploy/QA/Files/
+cd ~/Deploy/Deployment/Packages/
+ sshpass -p "${PASS_M}" scp ${FILE} "${USER_M}"@"${IP_D}":~/deploy/QA/Files/
+
+# Unzip and Host new pkg files to /var/www/DepTest/
+/usr/bin/sshpass -p ${pAs} ssh -t root@"${IP_D}" "sudo unzip /home/${USER_M}/deploy/QA/Files/${FILE} -d /var/www/DepTest/"
+	 

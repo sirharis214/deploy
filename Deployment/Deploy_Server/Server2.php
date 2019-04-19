@@ -32,6 +32,8 @@ function getV($machine)
 
 function doUpdate($myip,$lvl,$machine,$nextV,$filename)
 {
+	//This is updating Table after Dev sends New Pkg to Deploy
+	
 	$db = mysqli_connect("localhost","user1","user1pass","deploy");
         $statement = "INSERT INTO DevTable (ip,lvl,type,version,filename) VALUES ('$myip','$lvl','$machine','$nextV','$filename')";
 
@@ -83,11 +85,58 @@ function getFile($machine)
 			foreach($Q as $row)
 			{ 
 				$file = $row['filename'];
-				echo"filename is: $file";
+				echo"filename is: $file".PHP_EOL;
 				return $file;
 			}
 		}
 	}
+}
+
+function updateSent($lvl,$machine,$version,$status,$filename)
+{
+	//This is keeping track of Which pkg was sent to who
+
+	$db = mysqli_connect("localhost","user1","user1pass","deploy");
+
+        echo "received Request to track sent pkg".PHP_EOL;
+        $statement = "INSERT INTO StatusTable(lvl,type,version,filename,status) VALUES('$lvl','$machine','$version','$filename','$status')";
+
+        $runQ = mysqli_query($db,$statement);
+		if (!$runQ)
+        	{
+                 echo"Couldn't do query".PHP_EOL;
+                 exit();
+                }
+                else
+                {
+		 $msg = "Tracked: $filename sent to $lvl:$machine";
+		 return $msg;
+		}
+        
+}
+
+function changeStatus($lvl,$machine,$version,$file,$status)
+{
+        //This is going to change status of pkg that was tested
+
+        $db = mysqli_connect("localhost","user1","user1pass","deploy");
+
+        echo "received Request to change status of pkg".PHP_EOL;
+
+        $statement = "UPDATE StatusTable SET status='$status' WHERE lvl='$lvl' AND type='$machine' AND version = '$version' AND filename = '$file'";
+
+        $runQ = mysqli_query($db,$statement);
+                if (!$runQ)
+                {
+                 echo"Couldn't do query".PHP_EOL;
+//                 exit();
+                }
+                else
+                {
+                 $msg = "Updated status of pkg to $status";
+		 echo"$msg".PHP_EOL;
+                 return $msg;
+		}
 }
 
 function requestProcessor($request)
@@ -107,6 +156,10 @@ function requestProcessor($request)
                 return doUpdate($request['ip'],$request['lvl'],$request['machine'],$request['version'],$request['filename']);
 	case "getFile":
 		return getFile($request['machine']);
+	case "update_sent":
+                return updateSent($request['lvl'],$request['machine'],$request['version'],$request['status'],$request['filename']);
+	case "changeStatus":
+                return changeStatus($request['lvl'],$request['machine'],$request['version'],$request['file'],$request['status']);
 	case "test":
                 return doTest($request['bzid']);
 	case "validate_session":
