@@ -25,6 +25,7 @@ function getV($machine)
 		{
 			$msg = "There is no version for this machine";
 			return $msg;
+			exit();
 		}
 	}
 }
@@ -139,6 +140,95 @@ function changeStatus($lvl,$machine,$version,$file,$status)
 		}
 }
 
+
+function getProd($machine)
+{
+	 $db = mysqli_connect("localhost","user1","user1pass","deploy");
+
+        echo "received Request to get File to send to Production".PHP_EOL;
+        $statement = "SELECT MAX(version) FROM StatusTable WHERE lvl = 'QA' AND type ='$machine' AND status='good'";
+
+        $runQ = mysqli_query($db,$statement);
+        $queryBack = mysqli_num_rows($runQ);
+        if (!$db){ die("mysql connection failed: ".mysqli_connect_error());}
+        else
+        {
+                if ($queryBack > 0 )
+                {
+                        $Varray = mysqli_fetch_array($runQ);
+                        $version = $Varray[0];
+                        echo"Version Num is : $version".PHP_EOL;
+                }
+                $que = "SELECT filename FROM StatusTable WHERE lvl='QA' AND type='$machine' AND version='$version' AND status='good'";
+                $Q = mysqli_query($db,$que);
+                if (!$Q)
+                {
+                        echo"Couldn't do query".PHP_EOL;
+                        exit();
+                }
+                else
+                {
+                        foreach($Q as $row)
+                        {
+                                $file = $row['filename'];
+                                echo"filename is: $file".PHP_EOL;
+                                return $file;
+                        }
+                }
+        }
+}
+
+function getOld($lvl,$machine)
+{
+	 $db = mysqli_connect("localhost","user1","user1pass","deploy");
+
+        echo "received Request to get last working pkg for Production".PHP_EOL;
+        $statement = "SELECT MAX(version) FROM StatusTable WHERE lvl = '$lvl' AND type ='$machine' AND status='good'";
+
+        $runQ = mysqli_query($db,$statement);
+        $queryBack = mysqli_num_rows($runQ);
+        if (!$db){ die("mysql connection failed: ".mysqli_connect_error());}
+        else
+        {
+                if ($queryBack > 0 )
+                {
+                        $Varray = mysqli_fetch_array($runQ);
+                        $version = $Varray[0];
+                        echo"Version Num is : $version".PHP_EOL;
+                }
+		if (empty($version))
+		{  
+			//no prev working version for lvl : machine
+			$msg = "false";
+			return $msg;
+			exit(); 	
+		}
+                $que = "SELECT filename FROM StatusTable WHERE lvl='$lvl' AND type='$machine' AND version='$version' AND status='good'";
+                $Q = mysqli_query($db,$que);
+                if (!$Q)
+                {
+                        echo"Couldn't do query".PHP_EOL;
+                        exit();
+                }
+                else
+                {
+                        foreach($Q as $row)
+                        {
+                                $file = $row['filename'];
+                
+				if(!$row)
+				{ 
+				  $msg = "false";
+				  return $msg;
+				  exit();
+				}
+				 echo"filename is: $file".PHP_EOL;
+                                return $file;
+                        }
+                }
+        }
+}
+
 function requestProcessor($request)
 {
   	echo "received request".PHP_EOL;
@@ -160,6 +250,10 @@ function requestProcessor($request)
                 return updateSent($request['lvl'],$request['machine'],$request['version'],$request['status'],$request['filename']);
 	case "changeStatus":
                 return changeStatus($request['lvl'],$request['machine'],$request['version'],$request['file'],$request['status']);
+	case "getProd":
+                return getProd($request['machine']);
+	case "getOld":
+                return getOld($request['lvl'],$request['machine']);
 	case "test":
                 return doTest($request['bzid']);
 	case "validate_session":
@@ -171,6 +265,25 @@ function requestProcessor($request)
 $server = new rabbitMQServer("testRabbitMQ.ini","testServer");
 
 $server->process_requests('requestProcessor');
+
+
+function prodProcessor($request)
+{
+	echo "received request for Production".PHP_EOL;
+        var_dump($request);
+
+        if(!isset($request['type']))
+        {
+         return "ERROR: unsupported message type";
+        }
+        switch ($request['type'])
+        {
+        case "getOld":
+                return getOld($request['lvl'],$request['machine']);
+	}
+}
+$pro = new rabbitMQServer("testRabbitMQ.ini","Prod");
+$pro->process_requests('prodProcessor');
 exit();
 
 ?>

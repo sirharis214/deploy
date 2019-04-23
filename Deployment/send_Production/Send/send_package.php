@@ -8,16 +8,16 @@
 $machine = exec('../getSend.sh');
 
 echo "machine is: ".$machine."\n";
-//start funtion to get file that we have to send to QA
-getFile($machine);
+//start funtion to get file that we have to send to Production
+getProd($machine);
 
 //Get file name for the last version sent by Development
-function getFile($machine)
+function getProd($machine)
 {
 	$client = new rabbitMQClient("testRabbitMQ.ini","testServer");
                 
 	$request= array();
-        $request['type'] = "getFile";
+        $request['type'] = "getProd";
         $request['machine'] = $machine;
         
 	$file = $client->send_request($request);
@@ -38,16 +38,16 @@ function sendFile($machine,$file,$version)
 
 function doUpdate($machine,$file,$version)
 {
-	//You are sending a pkg to QA...
+	//You are sending a pkg to Production...
 	//Track this by updating StatusTable
 	$client = new rabbitMQClient("testRabbitMQ.ini","testServer");
 
         $request= array();
         $request['type'] = "update_sent";
-        $request['lvl']  = 'QA';
+        $request['lvl']  = 'Prod';
 	$request['machine'] = $machine;
 	$request['version']  = $version;
-	$request['status']  = "Pending";
+	$request['status']  = "good";
 	$request['filename'] = $file;
 
         $response = $client->send_request($request);

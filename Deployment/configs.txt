@@ -29,3 +29,11 @@ Must Do :
 	  ReEnter
 	If root already has pass -> sudo sh -  ... i think, to test
 				 -> sudo -i    ... to change pass 
+
+Must Do:
+	Go on all Vm's rabbitMQ GUI
+	Make a new Queue in testHost: prod
+	bind it to testExchange with binding key *
+	Go to testRabbitMQ.ini:
+		make sure there is a new Server called : Prod 
+		With new Queue information ( only queue name changes here, rest same as testServer)
