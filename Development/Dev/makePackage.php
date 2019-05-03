@@ -10,6 +10,12 @@
 	{
 		echo "Getting last Version # for ".$machine.PHP_EOL;
 		$client = new rabbitMQClient("testRabbitMQ.ini","testServer");
+
+		if(!$client )
+		{
+		$client = new rabbitMQClient("testRabbitMQ.ini","slaveServer");
+		}
+
 		$request= array();
 		$request['type'] = "chkV";
 		$request['machine'] = $machine;
