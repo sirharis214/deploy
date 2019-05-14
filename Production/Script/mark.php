@@ -4,11 +4,11 @@
         require_once('get_host_info.inc');
 	require_once('rabbitMQLib.inc');
 	
-	getFile(); //get pkg file name from Packages directory in this vm
+	getFile(); //get the zip filename from Packages directory in this vm
 
 	function getFile()
 	{
-		//What file did you test
+		//What file were you hosting
 		$file = shell_exec("./getFile.sh");
 
 		echo "current pkg is: $file".PHP_EOL;
@@ -23,7 +23,7 @@
         echo "Your IP is: $ip";
         $machineType  = "";
         
-                if (trim($ip) == "10.0.2.14"){
+                if (trim($ip) == "10.0.2.16"){
 
 			$machineType = "FE";
 			$lvl = "Prod";
@@ -41,7 +41,7 @@
 		//changing status to bad
 		$status = "bad";
 		$filename = trim($file);
-		//get version # based on zip file name
+		//get version # based on zip filename
 		$version = substr($filename,-5,1);
 
 		$client = new rabbitMQClient("testRabbitMQ.ini","testServer");
@@ -66,7 +66,7 @@ function getOld($lvl,$machineType)
 {
 
         echo"Ready to get Old Pkg...".PHP_EOL;
-        //what was the last pkg that was working on Prod on FE/BE
+        //what was the last pkg marked good for Prod-FE/BE
         $client = new rabbitMQClient("testRabbitMQ.ini","Prod");
                 $request= array();
                 $request['type'] = "getOld";

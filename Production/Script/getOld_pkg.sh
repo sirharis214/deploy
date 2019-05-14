@@ -12,17 +12,17 @@ FILE=$2
 # Delete files from /var/www/Backup/
 # mv files from /var/www/DepTest to /var/www/Backup/
 
-cd ~/deploy/Production/Packages/
+cd ~/Production/Packages/
 sudo rm -r ./*.zip
 cd /var/www/Backup/
 sudo rm -r ./*
-cd /var/www/DepTest/
-sudo mv ./* /var/www/Backup/
+cd /var/www/ishop/
+sudo yes | cp -rf ./* /var/www/Backup/
 
 # Get old package from Deploy
 # ~/Deploy/Deployment/Packages/
 
-# password for QA root
+# password for Deploy root
 pAs="passwd"
 
 /usr/bin/sshpass -p ${PASS_M} ssh -t "${USER_M}"@"${IP_D}" "cd /home/${USER_M}/Deploy/Deployment/send_Production/; ./oldSend.sh ${MACH} ${FILE};"
