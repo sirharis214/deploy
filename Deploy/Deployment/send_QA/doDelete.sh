@@ -20,7 +20,7 @@ FILE=$2
 pAs="passwd"
 
 # Delete All text files and index.php from /var/www/ishop
-/usr/bin/sshpass -p ${pAs} ssh -t root@"${IP_D}" " cd /var/www/ishop/; sudo rm -r ./*; cd /var/www/; sudo cp -r rabbitMQFiles ./ishop"
+/usr/bin/sshpass -p ${pAs} ssh -t root@"${IP_D}" "cd /home/${USER_M}/QA/Files/;sudo rm *.zip; cd /var/www/ishop/; sudo rm -r ./*; cd /var/www/; sudo cp -r rabbitMQFiles ./ishop"
 
 # Send New package to ~/QA/Files/
 cd ~/Deploy/Deployment/Packages/

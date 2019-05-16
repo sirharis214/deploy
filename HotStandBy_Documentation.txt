@@ -1,0 +1,127 @@
+Franny
+
+Hot Standby && Database Replication 
+
+Automatic failover when master database goes down using mysql utilities for
+Ubuntu 18.04
+Mysql 5.7.2
+
+Install mysql utilities on all servers
+Sudo apt-get install mysql-utilities
+
+Mysql Failover uses GTIDs (Global Transaction Identifiers). So when need to enable this first. In my case, I made the following changes.  
+
+On all servers edit the mysql.cnf file located in /etc/mysql/mysql.conf.d
+Add:
+
+gtid-mode = ON
+enforce-gtid-consistency = true
+report-host = 10.0.2.14                            Ip address of the current server
+report-port = 3306
+master-info-repository = TABLE
+relay-log-info-repository = TABLE  
+
+Now we use mysqlreplicate to establish a connection from slave to master so mysqlfailover can see it. In my case it was
+
+mysqlreplicate --master=root:pass@’10.0.2.14’:3306 --slave=root:pass@’10.0.2.15’:3306 --rpl-user=slaveuser1:slaveuserpass
+
+Verify that the connection worked by typing this command
+
+mysqlrplshow --master=slaveuser1:slaveuserpass@'10.0.2.14':3306 --discover-slaves-login=root:pass;
+
+Now we test failover by using the mysqlfailover command. The command is
+
+mysqlfailover --master=root:pass@’10.0.2.14':3306 --discover-slaves-login=root:pass --health
+ 
+ Now shutdown master. The slave should become the new master. 
+
+To make the old master the master again we need to use mysqlrpladmin with the switchover command. In my case its 
+
+mysqlrpladmin --master=root:pass@'10.0.2.15':3306 --new-master=root:pass@'10.0.2.14':3306 --demote-master --discover-slaves-login=root:pass switchover
+
+Then type the mysqlfailover command to be ready for another shutdown.
+
+
+Database Replication
+
+Master Slave Database Creation Steps
+VM 1 Master IP Address: 10.0.2.14
+VM 2 Slave IP Address: 10.0.2.15
+
+In Master VM
+
+First edit this file and make the following changes
+/etc/mysql/mysql.conf.d/mysqld.cnf
+
+Uncomment bind-address and change its default ip address to the VM 1 IP Address. 
+In my case its 10.0.2.14
+Uncomment server-id and change it to 1
+Uncomment log-bin
+
+Save/Write and quit the file
+
+Restart mysql server
+Login to mysql
+Create a user with ip address VM2
+
+CREATE USER 'slaveuser1'@'10.0.2.15' IDENTIFIED BY 'user1pass';
+
+Grant all privileges for that user
+
+GRANT REPLICATION SLAVE ON *.* TO 'slaveuser1'@'10.0.2.15';
+
+Next type the command
+
+SHOW MASTER STATUS;
+
+and remember or write down the File name and position of mysql-bin.xxxxxx. You will need this later.
+In my case it was mysql-bin.000001 with position 624
+
+Exit
+
+Dump Databases by
+
+-mysqldump -u root -p --all-databases --master-data > dbdump.sql
+
+Upload the dump to VM2 using this command
+
+scp dbdump.sql 10.0.2.15:/tmp
+
+Now in VM2
+Edit this file and make the following changes
+
+/etc/mysql/mysql.conf.d/mysqld.cnf
+
+Uncomment bind-address and change the default address to VM2 IP address. In my case its 10.0.2.15
+Uncomment server-id and set it to 2
+Uncomment log_bin
+Save/Write and quit the file
+
+Restart mysql server
+
+import dbdump.sql to mysql by
+mysql -u user1 -p < /tmp/dbdump.sql
+
+Login to mysql
+Stop the slave. We are going to configure it for its master database. Here we are going to use what we wrote down earlier. In my case the commands are
+
+stop slave;
+
+CHANGE MASTER TO
+MASTER_HOST='10.0.2.15',
+MASTER_USER='slaveuser1',
+MASTER_PASSWORD='user1pass',
+MASTER_LOG_FILE='mysql-bin.000001',
+MASTER_LOG_POS=619;
+
+start slave;
+
+Check to see if you have succeeded by 
+
+show slave status\G
+
+If you get an error saying your slave and master have he same UUIDs, it means you may have cloned your slave VM from your master VM before. To fix this, in VM 2, delete the file auto.cnf by running the command
+
+sudo rm /var/lib/mysql/auto.cnf
+
+Check status again. Should be working.

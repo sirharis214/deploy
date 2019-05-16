@@ -4,7 +4,7 @@
 	$output = $_SESSION['noti'];
 
 	include ("php/connectDB2.php");
-	include ("php/notif.php");
+//	include ("php/notif.php");
 ?>
 
 <!DOCTYPE html>
@@ -75,7 +75,8 @@
           <div class="nameInContent">
 	    <!--<h2 style="margin: auto;"> This is a sample change </h2>-->
             <h1> <a href="index.php"><img src="images/ishop.png" width="200px"> </a> </h1>
-          </div>
+            <h2 style="margin: auto; color: red;"> HOME PAGE </h2>
+	  </div>
 
           <div id="button-container">
             <div>

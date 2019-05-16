@@ -1,0 +1,16 @@
+#!/bin/bash
+
+HOST=10.0.2.14
+ping -c1 $HOST 1>/dev/null 2>/dev/null
+SUCCESS=$?
+
+if [ $SUCCESS -eq 0 ]
+then
+	echo "$HOST has replied"
+else
+	echo "$HOST didn't reply"
+
+	`/home/franny/Final490Proj/chkconnection.sh`
+fi
+#EOF
+

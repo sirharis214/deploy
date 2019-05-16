@@ -103,11 +103,21 @@ Steps to setup systemd for Server2.php are in Documentation.txt but I will list 
                 sudo systemctl enable ishop.service
 
 
-# ping script to put into cron job for Prod Slave's
-# cron job instructions
-# resilient db instrustions
-# firewall instrustions
+The directory Prod_BE_Slave_cron
+	Has the scripts needed to run the cronjob which works like so:
+	Slave Prof BE vm continusely pings master Prod BE vm every 5 seconds,
+	Once the ping gets no response, It switches the Slave database into action, 
+	and replaces testRabittMQ.ini in 
+		/var/www/ishop/rabbitMQFiles/ 
+		and 
+		/var/www/rabbitMQFiles/
 
+See Documentation on cron job for more info on this cronjob and many other for our 
+	Crontab_Documentation.txt
+
+See HotStandBy_Documentation.txt   for info on resilency and hot standbay.
+
+run the script firewall.sh which will change all that settings needed for firewall.
 
 Deployment system is set
 	REMEMBER TO SETUP root pass

@@ -32,7 +32,7 @@ FILE=$2
 pAs="passwd"
 
 # Delete All text files and index.php from /var/www/ishop
-/usr/bin/sshpass -p ${pAs} ssh -t root@"${IP_D}" " cd /var/www/ishop/; sudo rm -r ./*; cd /var/www/; sudo cp -r rabbitMQFiles ./ishop"
+/usr/bin/sshpass -p ${pAs} ssh -t root@"${IP_D}" "cd /home/${USER_M}/Production/Packages/; sudo rm *.zip ;cd /var/www/ishop/; sudo rm -r ./*; cd /var/www/; sudo cp -r rabbitMQFiles ./ishop"
 
 # Send New package to ~/Production/Packages/
 cd ~/Deploy/Deployment/Packages/
@@ -51,7 +51,7 @@ cd ~/Deploy/Deployment/Packages/
 
 
 # Delete All text files and index.php from /var/www/ishop
-/usr/bin/sshpass -p ${pAs} ssh -t root@"${IP_S}" " cd /var/www/ishop/; sudo rm -r ./*; cd /var/www/; sudo cp -r rabbitMQFiles ./ishop"
+/usr/bin/sshpass -p ${pAs} ssh -t root@"${IP_S}" " cd /var/www/ishop/; sudo rm -r ./*; cd /var/www/; sudo cp -r rabbitMQFiles ./ishop; cd /home/${USER_M}/Production/Packages; sudo rm -r *.zip"
 
 # Send New package to ~/Production/Packages/
 cd ~/Deploy/Deployment/Packages/
