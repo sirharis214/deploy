@@ -1,3 +1,9 @@
+SUDO TEAM:
+Haris
+Shaiddy
+Ahsan
+Emad
+Franny
 
 All these Folders are for each deploy stage vm's
 Everything is tested and works from sending to QA and Prod &&
