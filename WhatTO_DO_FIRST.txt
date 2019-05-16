@@ -1,4 +1,0 @@
-These all folders are set up exactly how the file paths are suppose to be.
-
-Take each folder and move it to the ~/ For each respectable VM and continue as usual.
-

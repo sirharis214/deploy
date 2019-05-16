@@ -1,0 +1,135 @@
+Haris Nasir
+
+This documentation is for setting up our Deployment system.
+	Basic setup requirements:
+	You need minimum of 9 vm's
+	must have ip's correct:
+
+        Level   Machine   User     IP        Pass
+        _________________________________________
+        Deploy  Deploy    haris    10.0.2.9   p
+        Dev     FrontEnd  shaiddy  10.0.2.10  1
+        Dev     BackEnd   shaiddy  10.0.2.11  1
+        QA      FrontEnd  ahsan    10.0.2.12  Ahsan121
+        QA      BackEnd   ahsan    10.0.2.13  Ahsan121
+        Prod    BE master franny   10.0.2.14  fgsoccer7
+        Prod    BE slave  franny   10.0.2.15  fgsoccer7
+        Prod    FE master emadt    10.0.2.16  password
+        Prod    FE slave  emadt    10.0.2.17  password
+
+Make Sure you have followed steps from Website_Documentation.txt on every VM that is part of Deployment before you continue.
+	At this point you should have ran script_1.sh
+FILE PATHS ARE VERY CRUCIAL IN THE DEPLOYMENT SYSTEM, follow file paths exactly as instructed.
+
+* First step, run the script  script_2.sh
+	This will download ssh, sshpass and open a file for changes that 
+	allow Deploy vm to run root commands remotely.
+
+	When you run the script, it will echo out the changes that need to be made in the file that opens.
+	There is one extra step you must do manually, 
+	Steps are listed below and also inside script_2.sh file
+	
+        On every vm:
+        sudo passwd root
+          Enter new Unix password: passwd       
+          		  ReEnter: passwd
+
+* Second step, Clone deployment repo onto every VM
+	cd ~/git/
+	git clone https://github.com/sirharis214/deploy/tree/Final
+	git fetch --all
+	git branch --all
+	git checkout Final
+	git pull origin Final
+
+* Third step, make a new queue for production rollback purposes,
+        Go on all Production Vm's and the Deploy VM rabbitMQ GUI
+        Make a new Queue for testHost
+                name it 'prod'
+        bind it to testExchange with binding key *
+        Go to /var/www/ishop/rabbitMQFiles/testRabbitMQ.ini  
+                make sure there is a new Server called : Prod
+                With new Queue information ( only queue name changes here, rest is same as testServer)
+
+**** On Deploy VM (10.0.2.9) ****
+	cd ~/git/deploy/
+	sudo cp -r ./Deploy/  ~/
+**** On Development VM's (10.0.2.10  & 10.0.2.11)
+	cd ~/git/deploy/
+	sudo cp -r ./Deploy/ ~/
+**** On QA   VM's (10.0.2.12  & 10.0.2.13)
+	cd ~/git/deploy/
+	sudo cp -r ./Development/  ~/
+**** On ALL Production VM's FE (10.0.2.16  & 10.0.2.17)
+			    BE (10.0.2.14  & 10.0.2.15)
+	cd ~/git/deploy/
+	sudo cp -r ./Production/  ~/
+
+Steps to setup systemd for Server2.php are in Documentation.txt but I will list them again here.
+	ON DEPLOY VM:
+		cd /lib/systemd/system
+		sudo vi deploy.service
+			[Unit]	
+			Description= This is a Deploy system rmq server 
+				
+			[Service]
+			Type=simple
+			ExecStart=/usr/bin/php -f /home/haris/Deploy/Deployment/Server2.php
+	
+			[Install]
+			WantedBy=multi-user.target
+
+		-save-
+		sudo systemctl start deploy.service
+		sudo systemctl status deploy.service
+		sudo systemctl enable deploy.service
+
+	ON ALL OTHER BACKEND VM's (Dev BE, QA BE, PROD BE master/slave )
+		cd /lib/systemd/system
+                sudo vi ishop.service
+                        [Unit]
+                        Description= This is a ishop backend rmq server
+
+                        [Service]
+                        Type=simple
+                        ExecStart=/usr/bin/php -f /home/USERNAME/git/Final490Proj/BE/Server2.php
+
+                        [Install]
+                        WantedBy=multi-user.target
+
+                -save-
+                sudo systemctl start ishop.service
+                sudo systemctl status ishop.service
+                sudo systemctl enable ishop.service
+
+
+# ping script to put into cron job for Prod Slave's
+# cron job instructions
+# resilient db instrustions
+# firewall instrustions
+
+
+Deployment system is set
+	REMEMBER TO SETUP root pass
+	sudo passwd root
+	Password: passwd
+	REMEMBER TO SET UP a NEW QUEUE called 'prod' FOR DEPLOY AND ALL PROD LVL VM's
+	Have Deploy ping every vm to ensure a connection.
+	ALSO
+	Have Deploy manually send a sample file using scp to every vm, 
+	you are always prompted to recognize the receiving vm the first time.
+			scp test.txt username@ip:~/
+		Send sample files from:
+		Deploy -> Dev FE/BE
+		Deploy -> QA  FE/BE
+		Deploy -> Prod FE master
+			       FE slave
+			  Prod BE master
+			  Prod BE slave
+		Prod FE master -> Deploy
+		Prod FE slave -> Deploy
+		Prod BE master -> Deploy
+		Prod BE slave -> Deploy
+		Dev FE -> Deploy
+		Dev BE -> Deploy
+

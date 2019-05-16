@@ -1,5 +1,35 @@
+
 All these Folders are for each deploy stage vm's
 Everything is tested and works from sending to QA and Prod &&
 Successfully unzipping into /var/www/x
 
 -Haris 10.12.2019  11:55pm
+
+
+In Deploy VM
+~/Deploy/Deployment/send_Production/
+
+In Development FE VM
+This is where all the Development Files are
+And then you do into Dev and run the ./makePackage.php file to send pkg to Deploy
+~/Development/
+
+In DEVELOPMENT BE VM
+This is where the Server.php file exists
+~/Backend/
+
+In QA FE VM
+~/QA/
+
+In QA BE VM
+~/Backend/
+
+In Prod FE master slave
+This is where all the Prod Files are and then moved to /var/www/
+~/Production/ 
+
+In Prod BE master slave
+~/Backend/
+
+
+

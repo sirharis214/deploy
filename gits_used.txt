@@ -1,0 +1,18 @@
+Haris Nasir
+Shaiddy
+Ahsan
+Emad
+Franny
+
+Ishop :
+	**  https://github.com/destysha/Final490Proj  **
+	https://github.com/destysha/490Proj
+	https://github.com/sirharis214/it490/blob/mysql_example/
+	https://github.com/sirharis214/RabbitMQ_01
+	https://github.com/sirharis214/pracLogin
+	https://github.com/sirharis214/testRepo
+	
+Deploy :
+	**  https://github.com/sirharis214/deploy/tree/Final  **
+
+	
