@@ -31,7 +31,8 @@ function getProd($machine)
 function sendFile($machine,$file,$version)
 {
 	echo"Sending Version: $version File: $file  to Prod $machine...\n";
-	shell_exec("../doSend.sh $machine $file");
+	#shell_exec("../doSend.sh $machine $file");
+	shell_exec("../doDelete.sh $machine $file");
 	echo "Done sending...\n";
 	doUpdate($machine,$file,$version);
 	

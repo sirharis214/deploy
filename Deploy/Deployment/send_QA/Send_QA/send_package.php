@@ -32,7 +32,8 @@ function getFile($machine)
 function sendFile($machine,$file,$version)
 {
 	echo "Sending $file to QA...\n";
-	shell_exec("../doSend.sh $machine $file");
+	shell_exec("../doDelete.sh $machine $file");
+	//shell_exec("../doSend.sh $machine $file");
 	doUpdate($machine,$file,$version);
 	
 }
